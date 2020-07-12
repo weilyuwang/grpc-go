@@ -22,3 +22,11 @@ run-server-greet:
 
 run-client-greet:
 	go run greet/greet_client/client.go
+
+
+run-server-blog:
+	go run blog/blog_server/server.go
+ 
+
+run-client-blog:
+	go run blog/blog_client/client.go
