@@ -35,6 +35,8 @@ type server struct {
 }
 
 func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*blogpb.CreateBlogResponse, error) {
+	fmt.Println("CreateBlog Request")
+
 	blog := req.GetBlog()
 
 	// Parse the blog data from client request
