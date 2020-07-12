@@ -1,7 +1,12 @@
-grpc-compile:
+compile-calculator:
 	protoc calculator/calculatorpb/calculator.proto --go_out=plugins=grpc:.
+
+compile-greet:	
 	protoc greet/greetpb/greet.proto --go_out=plugins=grpc:.
  
+compile-blog:
+	protoc blog/blogpb/blog.proto --go_out=plugins=grpc:.
+
 
 run-server-calculator:
 	go run calculator/calculator_server/server.go
