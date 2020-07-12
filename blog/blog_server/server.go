@@ -9,6 +9,9 @@ import (
 	"os/signal"
 	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/weilyuwang/grpc-go/blog/blogpb"
@@ -31,6 +34,40 @@ type blogItem struct {
 type server struct {
 }
 
+func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*blogpb.CreateBlogResponse, error) {
+	blog := req.GetBlog()
+
+	// Parse the blog data from client request
+	// Create blogItem from the request data
+	data := blogItem{
+		AuthorID: blog.GetAuthorId(),
+		Title:    blog.GetTitle(),
+		Content:  blog.GetContent(),
+	}
+
+	// Insert into Mongodb collection
+	res, err := collection.InsertOne(context.Background(), data)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Internal Error while inserting doc into MongoDB: %v\n", err))
+	}
+
+	// Grab the ID of the inserted doc
+	oid, ok := res.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintln("Connot convert to ObjectID"))
+	}
+
+	return &blogpb.CreateBlogResponse{
+		Blog: &blogpb.Blog{
+			Id:       oid.Hex(),
+			AuthorId: blog.GetAuthorId(),
+			Title:    blog.GetTitle(),
+			Content:  blog.GetContent(),
+		},
+	}, nil
+
+}
+
 func main() {
 
 	// If we crash the go code, we get the file name and line number
@@ -46,6 +83,7 @@ func main() {
 	fmt.Println("Connecting to MongoDB")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatalf("Error connecting to MongoDB Server: %v\n", err)
