@@ -13,6 +13,7 @@ import (
 	"github.com/weilyuwang/grpc-go/calculator/calculatorpb"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
 
@@ -140,6 +141,9 @@ func main() {
 	s := grpc.NewServer()
 	// Register the GreetService
 	calculatorpb.RegisterCalculatorServiceServer(s, &server{})
+
+	// Register reflection service
+	reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
