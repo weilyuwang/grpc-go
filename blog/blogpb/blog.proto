@@ -11,10 +11,10 @@ message Blog {
   string content = 4;
 }
 
-message CreateBlogRequest { Blog blog = 1; }
+message CreateBlogRequest { Blog blog = 1; } // no blog_id in the request
 
 message CreateBlogResponse {
-  Blog blog = 1; // will have a blog_id
+  Blog blog = 1; // will have a blog_id in the response - added by MongoDB
 }
 
 message ReadBlogRequest { string blog_id = 1; }
@@ -25,11 +25,19 @@ message UpdateBlogRequest { Blog blog = 1; }
 
 message UpdateBlogResponse { Blog blog = 1; }
 
+message DeleteBlogRequest { string blog_id = 1; }
+
+message DeleteBlogResponse { string blog_id = 1; }
+
 service BlogService {
   rpc CreateBlog(CreateBlogRequest) returns (CreateBlogResponse) {};
 
   rpc ReadBlog(ReadBlogRequest) returns (ReadBlogResponse) {
   }; // returns NOT_FOUND if not found
 
-  rpc UpdateBlog(UpdateBlogRequest) returns (UpdateBlogResponse) {};
+  rpc UpdateBlog(UpdateBlogRequest) returns (UpdateBlogResponse) {
+  }; // returns NOT_FOUND if not found
+
+  rpc DeleteBlog(DeleteBlogRequest) returns (DeleteBlogResponse) {
+  }; // returns NOT_FOUND if not found
 }
