@@ -29,11 +29,32 @@ func main() {
 		Title:    "My First Blog",
 		Content:  "Content of my first blog",
 	}
-	res, err := c.CreateBlog(context.Background(), &blogpb.CreateBlogRequest{Blog: blog})
+	createBlogRes, err := c.CreateBlog(context.Background(), &blogpb.CreateBlogRequest{Blog: blog})
 	if err != nil {
 		log.Fatalf("Unexpected error: %v\n", err)
-		return
+	}
+	fmt.Printf("Blog has been created: %v\n", createBlogRes)
+	blogID := createBlogRes.GetBlog().GetId()
+
+	// Read Blog
+	fmt.Println("Reading the blog")
+
+	// read blog with an invalid id
+	_, errRead := c.ReadBlog(context.Background(), &blogpb.ReadBlogRequest{
+		BlogId: "SOME_INVALID_ID",
+	})
+	if errRead != nil {
+		fmt.Printf("Error happened while reading blog: %v\n", errRead)
 	}
 
-	fmt.Printf("Blog has been created: %v\n", res.Blog)
+	// read blog with a valid id
+	readBlogReq := blogpb.ReadBlogRequest{
+		BlogId: blogID,
+	}
+	readBlogRes, readBlogErr := c.ReadBlog(context.Background(), &readBlogReq)
+	if readBlogErr != nil {
+		fmt.Printf("Error happened while reading blog: %v\n", readBlogErr)
+	}
+
+	fmt.Printf("Blog was read: %v\n", readBlogRes)
 }
