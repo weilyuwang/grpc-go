@@ -72,6 +72,8 @@ func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*
 }
 
 func (*server) ReadBlog(ctx context.Context, req *blogpb.ReadBlogRequest) (*blogpb.ReadBlogResponse, error) {
+	fmt.Println("ReadBlog Request")
+
 	blogID := req.GetBlogId() // blogID is a hex string
 	// convert blogId into ObjectId
 	oid, err := primitive.ObjectIDFromHex(blogID)
