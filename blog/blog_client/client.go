@@ -22,7 +22,7 @@ func main() {
 
 	c := blogpb.NewBlogServiceClient(cc)
 
-	// Create the blog
+	// -------------- Create the blog --------------
 	fmt.Println("Creating the blog")
 	blog := &blogpb.Blog{
 		AuthorId: "some_id",
@@ -36,7 +36,7 @@ func main() {
 	fmt.Printf("Blog has been created: %v\n", createBlogRes)
 	blogID := createBlogRes.GetBlog().GetId()
 
-	// Read Blog
+	// -------------- Read Blog --------------
 	fmt.Println("Reading the blog")
 
 	// read blog with an invalid id
@@ -57,4 +57,21 @@ func main() {
 	}
 
 	fmt.Printf("Blog was read: %v\n", readBlogRes)
+
+	// -------------- Update Blog --------------
+	newBlog := &blogpb.Blog{
+		Id:       blogID,
+		AuthorId: "changed_author_id",
+		Title:    "My First Blog (edited)",
+		Content:  "Content of my first blog with some awesome editions",
+	}
+
+	updateBlogReq := blogpb.UpdateBlogRequest{
+		Blog: newBlog,
+	}
+	updateBlogRes, updateBlogErr := c.UpdateBlog(context.Background(), &updateBlogReq)
+	if updateBlogErr != nil {
+		fmt.Printf("Error happened while updateing blog: %v\n", updateBlogErr)
+	}
+	fmt.Printf("Blog was updated: %v\n", updateBlogRes)
 }
