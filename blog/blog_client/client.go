@@ -41,7 +41,7 @@ func main() {
 
 	// read blog with an invalid id
 	_, errRead := c.ReadBlog(context.Background(), &blogpb.ReadBlogRequest{
-		BlogId: "SOME_INVALID_ID",
+		BlogId: "5f0bc73ceef9a6fa8c71d476",
 	})
 	if errRead != nil {
 		fmt.Printf("Error happened while reading blog: %v\n", errRead)
